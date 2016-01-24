@@ -51,11 +51,17 @@ public class BasicsTest {
     @Test
     public void callable() throws InterruptedException, ExecutionException {
         Callable<String> messageProvider = this::message;
-        ExecutorService tp = Executors.newFixedThreadPool(2);
-        Future<String> futureResult = tp.submit(messageProvider);
+        ExecutorService tp = Executors.newFixedThreadPool(10);
+        List<Future<String>> futures = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            Future<String> futureResult = tp.submit(messageProvider);
+            futures.add(futureResult);
+        }
+        for (Future<String> future : futures) {
+            String result = future.get();
+            System.out.println("result = " + result);
+        }
 
-        String result = futureResult.get();
-        System.out.println("result = " + result);
     }
 
     @Test
