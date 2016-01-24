@@ -2,8 +2,11 @@ package com.airhacks.microservices;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.junit.Test;
@@ -41,6 +44,20 @@ public class BasicsTest {
         }
     }
 
+    public String message() {
+        return "hey duke " + System.currentTimeMillis();
+    }
+
+    @Test
+    public void callable() throws InterruptedException, ExecutionException {
+        Callable<String> messageProvider = this::message;
+        ExecutorService tp = Executors.newFixedThreadPool(2);
+        Future<String> futureResult = tp.submit(messageProvider);
+
+        String result = futureResult.get();
+        System.out.println("result = " + result);
+    }
+
     @Test
     public void threadPool() throws InterruptedException {
         ExecutorService tp = Executors.newFixedThreadPool(5);
@@ -49,7 +66,6 @@ public class BasicsTest {
             tp.submit(run);
             Thread.sleep(10);
         }
-
     }
 
 }
