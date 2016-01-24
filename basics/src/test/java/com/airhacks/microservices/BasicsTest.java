@@ -2,6 +2,8 @@ package com.airhacks.microservices;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.junit.Test;
@@ -37,6 +39,17 @@ public class BasicsTest {
             t.start();
             Thread.sleep(10);
         }
+    }
+
+    @Test
+    public void threadPool() throws InterruptedException {
+        ExecutorService tp = Executors.newFixedThreadPool(5);
+        for (int i = 0; i < 10000; i++) {
+            Runnable run = this::display;
+            tp.submit(run);
+            Thread.sleep(10);
+        }
+
     }
 
 }
