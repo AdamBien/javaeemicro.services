@@ -71,7 +71,7 @@ public class BasicsTest {
     public void backpressure() {
         BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>(2);
         ThreadPoolExecutor tp = new ThreadPoolExecutor(1, 1, 60, TimeUnit.SECONDS, queue,
-                new ThreadPoolExecutor.DiscardPolicy());
+                this::onOverload);
         long start = System.currentTimeMillis();
         tp.submit(this::display);
         duration(start);
@@ -86,6 +86,10 @@ public class BasicsTest {
 
     public void duration(long start) {
         System.out.println("-- took: " + (System.currentTimeMillis() - start));
+    }
+
+    public void onOverload(Runnable r, ThreadPoolExecutor executor) {
+        System.out.println("-- runnable " + r + " executor " + executor.getActiveCount());
     }
 
     @Test
