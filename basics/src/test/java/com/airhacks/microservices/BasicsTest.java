@@ -8,7 +8,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -69,8 +69,9 @@ public class BasicsTest {
 
     @Test
     public void backpressure() {
-        BlockingQueue<Runnable> queue = new LinkedBlockingDeque<>(2);
-        ThreadPoolExecutor tp = new ThreadPoolExecutor(1, 1, 60, TimeUnit.SECONDS, queue, new ThreadPoolExecutor.CallerRunsPolicy());
+        BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>(2);
+        ThreadPoolExecutor tp = new ThreadPoolExecutor(1, 1, 60, TimeUnit.SECONDS, queue,
+                new ThreadPoolExecutor.DiscardPolicy());
         long start = System.currentTimeMillis();
         tp.submit(this::display);
         duration(start);
