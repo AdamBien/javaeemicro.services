@@ -2,11 +2,15 @@ package com.airhacks.microservices;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.junit.Test;
@@ -26,7 +30,7 @@ public class BasicsTest {
 
     void display() {
         try {
-            Thread.sleep(50000000);
+            Thread.sleep(2000);
         } catch (InterruptedException ex) {
             Logger.getLogger(BasicsTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -61,7 +65,26 @@ public class BasicsTest {
             String result = future.get();
             System.out.println("result = " + result);
         }
+    }
 
+    @Test
+    public void backpressure() {
+        BlockingQueue<Runnable> queue = new LinkedBlockingDeque<>(2);
+        ThreadPoolExecutor tp = new ThreadPoolExecutor(1, 1, 60, TimeUnit.SECONDS, queue, new ThreadPoolExecutor.CallerRunsPolicy());
+        long start = System.currentTimeMillis();
+        tp.submit(this::display);
+        duration(start);
+        tp.submit(this::display);
+        duration(start);
+        tp.submit(this::display);
+        duration(start);
+        tp.submit(this::display);
+        duration(start);
+
+    }
+
+    public void duration(long start) {
+        System.out.println("-- took: " + (System.currentTimeMillis() - start));
     }
 
     @Test
