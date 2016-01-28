@@ -13,9 +13,13 @@ public class ExceptionalPipelinesTest {
     @Test
     public void handle() throws InterruptedException, ExecutionException {
         CompletableFuture.supplyAsync(this::exceptional).
-                exceptionally(this::transform).
+                handle(this::handle).
                 thenAccept(this::consume).
                 get();
+    }
+
+    String handle(String valid, Throwable ex) {
+        return valid + " -- " + ex;
     }
 
     void consume(String message) {
