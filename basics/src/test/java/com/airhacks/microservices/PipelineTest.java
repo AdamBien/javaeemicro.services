@@ -1,6 +1,7 @@
 package com.airhacks.microservices;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,6 +28,18 @@ public class PipelineTest {
         first.thenCombine(second, this::combinator).
                 thenAccept(this::consumeMessage).get();
 
+    }
+
+    @Test
+    public void composingPipelines() {
+        CompletableFuture.supplyAsync(this::message).
+                thenCompose(this::compose).
+                thenAccept(this::consumeMessage);
+    }
+
+    CompletionStage<String> compose(String input) {
+        return CompletableFuture.supplyAsync(() -> input).
+                thenApply(this::beautify);
     }
 
     String greetings() {
