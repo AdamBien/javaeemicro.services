@@ -17,6 +17,24 @@ public class PipelineTest {
                 thenRun(this::finalAction);
     }
 
+    @Test
+    public void combiningPipelines() {
+        CompletableFuture<String> first = CompletableFuture.supplyAsync(this::message);
+        CompletableFuture<String> second = CompletableFuture.supplyAsync(this::greetings);
+        first.thenCombine(second, this::combinator).
+                thenApply(this::beautify).
+                thenAccept(this::consumeMessage);
+
+    }
+
+    String greetings() {
+        return "good morning";
+    }
+
+    String combinator(String first, String second) {
+        return first + " -- " + second;
+    }
+
     String message() {
         return "hey duke: " + System.currentTimeMillis();
     }
