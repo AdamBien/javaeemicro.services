@@ -1,6 +1,9 @@
 package com.airhacks.microservices;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.junit.Test;
 
 /**
@@ -18,12 +21,11 @@ public class PipelineTest {
     }
 
     @Test
-    public void combiningPipelines() {
-        CompletableFuture<String> first = CompletableFuture.supplyAsync(this::message);
-        CompletableFuture<String> second = CompletableFuture.supplyAsync(this::greetings);
+    public void combiningPipelines() throws InterruptedException, ExecutionException {
+        CompletableFuture<String> first = CompletableFuture.supplyAsync(this::message).thenApplyAsync(this::beautify);
+        CompletableFuture<String> second = CompletableFuture.supplyAsync(this::greetings).thenApplyAsync(this::beautify);
         first.thenCombine(second, this::combinator).
-                thenApply(this::beautify).
-                thenAccept(this::consumeMessage);
+                thenAccept(this::consumeMessage).get();
 
     }
 
@@ -40,6 +42,11 @@ public class PipelineTest {
     }
 
     String beautify(String input) {
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(PipelineTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return "+ " + input + "+";
     }
 
