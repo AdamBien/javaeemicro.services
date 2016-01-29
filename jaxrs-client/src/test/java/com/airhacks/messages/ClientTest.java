@@ -1,5 +1,8 @@
 package com.airhacks.messages;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.function.Supplier;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
@@ -22,8 +25,12 @@ public class ClientTest {
     }
 
     @Test
-    public void fetchMessage() {
-        String message = this.tut.request().get(String.class);
+    public void fetchMessage() throws InterruptedException, ExecutionException {
+        Supplier<String> messageSupplier = () -> this.tut.request().get(String.class);
+        CompletableFuture.supplyAsync(messageSupplier).thenAccept(this::consume).get();
+    }
+
+    void consume(String message) {
         System.out.println("message = " + message);
     }
 
