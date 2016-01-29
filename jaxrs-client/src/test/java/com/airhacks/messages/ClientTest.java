@@ -5,6 +5,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.function.Supplier;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,11 +28,13 @@ public class ClientTest {
     @Test
     public void fetchMessage() throws InterruptedException, ExecutionException {
         Supplier<String> messageSupplier = () -> this.tut.request().get(String.class);
-        CompletableFuture.supplyAsync(messageSupplier).thenAccept(this::consume).get();
+        CompletableFuture.supplyAsync(messageSupplier).
+                thenAccept(this::consume).
+                get();
     }
 
     void consume(String message) {
-        System.out.println("message = " + message);
+        this.tut.request().post(Entity.text(message));
     }
 
 }
