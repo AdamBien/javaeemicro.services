@@ -3,6 +3,8 @@ package com.airhacks.microservices;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.junit.Before;
@@ -21,8 +23,9 @@ public class PipelineTest {
 
     @Test
     public void forkJoinConfiguration() throws InterruptedException {
+        ExecutorService custom = Executors.newCachedThreadPool();
         for (int i = 0; i < 200; i++) {
-            CompletableFuture.runAsync(this::slow);
+            CompletableFuture.runAsync(this::slow, custom);
         }
         Thread.sleep(20000);
     }
