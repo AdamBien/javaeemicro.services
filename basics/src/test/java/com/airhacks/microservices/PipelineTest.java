@@ -5,6 +5,7 @@ import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -12,6 +13,27 @@ import org.junit.Test;
  * @author airhacks.com
  */
 public class PipelineTest {
+
+    @Before
+    public void init() {
+        System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism", "0");
+    }
+
+    @Test
+    public void forkJoinConfiguration() throws InterruptedException {
+        for (int i = 0; i < 200; i++) {
+            CompletableFuture.runAsync(this::slow);
+        }
+        Thread.sleep(20000);
+    }
+
+    void slow() {
+        try {
+            Thread.sleep(20000);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(PipelineTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     @Test
     public void pipeline() {
