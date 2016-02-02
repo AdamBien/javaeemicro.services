@@ -1,7 +1,10 @@
 package com.airhacks.async.boundary;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.Resource;
+import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.container.AsyncResponse;
@@ -14,9 +17,14 @@ import javax.ws.rs.container.Suspended;
 @Path("async")
 public class AsyncResource {
 
+    @Resource
+    ManagedExecutorService mes;
+
     @GET
     public void get(@Suspended AsyncResponse response) {
-        response.resume(this.doSomeWork());
+        CompletableFuture.
+                supplyAsync(this::doSomeWork, mes).
+                thenAccept(response::resume);
     }
 
     String doSomeWork() {
