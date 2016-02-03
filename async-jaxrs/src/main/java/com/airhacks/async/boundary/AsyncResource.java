@@ -1,14 +1,22 @@
 package com.airhacks.async.boundary;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.container.AsyncResponse;
 import javax.ws.rs.container.Suspended;
+import javax.ws.rs.core.Response;
+import org.glassfish.jersey.client.ClientProperties;
 
 /**
  *
@@ -19,6 +27,43 @@ public class AsyncResource {
 
     @Resource
     ManagedExecutorService mes;
+
+    private Client client;
+    private WebTarget tut;
+    private WebTarget processor;
+
+    @PostConstruct
+    public void init() {
+        this.client = ClientBuilder.newClient();
+        client.property(ClientProperties.CONNECT_TIMEOUT, 1000);
+        client.property(ClientProperties.READ_TIMEOUT, 5000);
+        this.tut = this.client.target("http://localhost:8080/supplier/resources/messages");
+        this.processor = this.client.target("http://localhost:8080/processor/resources/processors/beautification");
+    }
+
+    @GET
+    @Path("orchestration")
+    public String fetchMessage() {
+        Supplier<String> messageSupplier = () -> this.tut.request().get(String.class);
+        CompletableFuture.supplyAsync(messageSupplier, mes).
+                thenApply(this::process).
+                exceptionally(this::handle).
+                thenAccept(this::consume);
+        return "+++";
+    }
+
+    String handle(Throwable t) {
+        return "sorry we are overloaded! " + t.getMessage();
+    }
+
+    String process(String input) {
+        Response response = this.processor.request().post(Entity.text(input));
+        return response.readEntity(String.class);
+    }
+
+    void consume(String message) {
+        this.tut.request().post(Entity.text(message));
+    }
 
     @GET
     public void get(@Suspended AsyncResponse response) {
