@@ -26,7 +26,10 @@ import org.glassfish.jersey.client.ClientProperties;
 public class AsyncResource {
 
     @Resource
-    ManagedExecutorService mes;
+    ManagedExecutorService cpu;
+
+    @Resource(mappedName = "concurrent/orchestration")
+    ManagedExecutorService orchestration;
 
     private Client client;
     private WebTarget tut;
@@ -45,7 +48,7 @@ public class AsyncResource {
     @Path("orchestration")
     public void fetchMessage(@Suspended AsyncResponse response) {
         Supplier<String> messageSupplier = () -> this.tut.request().get(String.class);
-        CompletableFuture.supplyAsync(messageSupplier, mes).
+        CompletableFuture.supplyAsync(messageSupplier, this.orchestration).
                 thenApply(this::process).
                 exceptionally(this::handle).
                 thenApply(this::consume).
@@ -69,7 +72,7 @@ public class AsyncResource {
     @GET
     public void get(@Suspended AsyncResponse response) {
         CompletableFuture.
-                supplyAsync(this::doSomeWork, mes).
+                supplyAsync(this::doSomeWork, cpu).
                 thenAccept(response::resume);
     }
 
