@@ -43,13 +43,13 @@ public class AsyncResource {
 
     @GET
     @Path("orchestration")
-    public String fetchMessage() {
+    public void fetchMessage(@Suspended AsyncResponse response) {
         Supplier<String> messageSupplier = () -> this.tut.request().get(String.class);
         CompletableFuture.supplyAsync(messageSupplier, mes).
                 thenApply(this::process).
                 exceptionally(this::handle).
-                thenAccept(this::consume);
-        return "+++";
+                thenApply(this::consume).
+                thenAccept(response::resume);
     }
 
     String handle(Throwable t) {
@@ -61,8 +61,9 @@ public class AsyncResource {
         return response.readEntity(String.class);
     }
 
-    void consume(String message) {
+    String consume(String message) {
         this.tut.request().post(Entity.text(message));
+        return message;
     }
 
     @GET
