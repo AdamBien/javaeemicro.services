@@ -8,7 +8,7 @@
     <dependencies>
         <dependency>
             <groupId>com.airhacks</groupId>
-            <artifactId>porcupine</artifactId>
+            <artifactId>porcupine-spy</artifactId>
             <version>0.0.4</version>
         </dependency>
         <dependency>
