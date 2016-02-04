@@ -1,12 +1,13 @@
 package com.airhacks.async.boundary;
 
+import com.airhacks.porcupine.execution.boundary.Dedicated;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.enterprise.concurrent.ManagedExecutorService;
+import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.client.Client;
@@ -25,11 +26,13 @@ import org.glassfish.jersey.client.ClientProperties;
 @Path("async")
 public class AsyncResource {
 
-    @Resource
-    ManagedExecutorService cpu;
+    @Inject
+    @Dedicated
+    ExecutorService cpu;
 
-    @Resource(mappedName = "concurrent/orchestration")
-    ManagedExecutorService orchestration;
+    @Inject
+    @Dedicated
+    ExecutorService orchestration;
 
     private Client client;
     private WebTarget tut;
