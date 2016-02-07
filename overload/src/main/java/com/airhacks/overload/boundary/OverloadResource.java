@@ -1,9 +1,10 @@
 package com.airhacks.overload.boundary;
 
-import com.airhacks.porcupine.execution.boundary.Dedicated;
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -24,9 +25,12 @@ public class OverloadResource {
     @Inject
     AnswerFinder finder;
 
-    @Inject
-    @Dedicated
-    ExecutorService answers;
+    static ExecutorService answers;
+
+    @PostConstruct
+    public void initTP() {
+        answers = Executors.newFixedThreadPool(5);
+    }
 
     @GET
     public void answers(@Suspended AsyncResponse response) {
