@@ -24,7 +24,7 @@ public class AnswerThreadPoolConfigurator extends ExecutorConfigurator {
                     corePoolSize(2).
                     maxPoolSize(2).
                     queueCapacity(2).
-                    customRejectedExecutionHandler(this::broadcastMessage).
+                    callerRunsPolicy().
                     build();
         }
         return super.forPipeline(name);
