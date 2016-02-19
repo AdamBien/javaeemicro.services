@@ -24,10 +24,6 @@ public class MessageFactory {
         if (timestamp % 2 == 0) {
             throw new IllegalStateException("Invalid timestamp! " + timestamp);
         }
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException ex) {
-        }
         String message = "hey duke ";
         monitoringChannel.fire(message);
         return message + timestamp;

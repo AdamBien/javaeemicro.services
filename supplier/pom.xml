@@ -12,6 +12,11 @@
             <version>0.0.2</version>
         </dependency>
         <dependency>
+            <groupId>com.airhacks</groupId>
+            <artifactId>snail</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+        <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
             <version>7.0</version>
