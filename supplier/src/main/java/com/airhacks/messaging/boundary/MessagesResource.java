@@ -1,9 +1,6 @@
 package com.airhacks.messaging.boundary;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ejb.Stateless;
-import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -18,18 +15,11 @@ import javax.ws.rs.Path;
 public class MessagesResource {
 
     @Inject
-    Event<String> monitoringChannel;
+    MessageProvider provider;
 
     @GET
     public String message() {
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(MessagesResource.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        String message = "hey duke ";
-        monitoringChannel.fire(message);
-        return message + System.currentTimeMillis();
+        return provider.nextMessage();
     }
 
     @POST

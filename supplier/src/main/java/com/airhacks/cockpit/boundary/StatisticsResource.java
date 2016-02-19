@@ -22,7 +22,9 @@ public class StatisticsResource {
     @GET
     public JsonObject statistics() {
         return Json.createObjectBuilder().
-                add("total-msg-count", sink.getMessageCount())
-                .build();
+                add("total-msg-count", sink.getMessageCount()).
+                add("last-exception", sink.getLastException()).
+                add("exception-count", sink.getExceptionCount()).
+                build();
     }
 }
