@@ -1,0 +1,11 @@
+client:
+  image: centos:7
+  container_name: tomee-client
+  entrypoint: ping tomee-ping-composed
+  links:
+      - service
+service:
+  image: airhacks/tomee-ping
+  container_name: tomee-ping-composed
+  ports:
+      - "8080:8080"
