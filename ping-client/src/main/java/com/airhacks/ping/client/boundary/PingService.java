@@ -1,6 +1,6 @@
 package com.airhacks.ping.client.boundary;
 
-import com.airhacks.servicelink.boundary.LegacyLink;
+import com.airhacks.servicelink.boundary.Link;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.client.WebTarget;
@@ -13,7 +13,7 @@ import javax.ws.rs.client.WebTarget;
 public class PingService {
 
     @Inject
-    @LegacyLink(name = "ping", portNumber = 8080, path = "/ping/resources/pings/echo/")
+    @Link(name = "tomee-ping", portNumber = 8080, path = "/ping/resources/pings/echo/")
     private WebTarget pingTarget;
 
     public String message() {
