@@ -8,8 +8,8 @@
     <dependencies>
         <dependency>
             <groupId>com.airhacks</groupId>
-            <artifactId>jc2</artifactId>
-            <version>0.0.2</version>
+            <artifactId>marina</artifactId>
+            <version>0.0.1</version>
         </dependency>
         <dependency>
             <groupId>javax</groupId>

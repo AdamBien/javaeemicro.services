@@ -1,6 +1,7 @@
 package com.airhacks.configurator.boundary;
 
-import com.airhacks.jc2.configuration.boundary.Configurable;
+import com.airhacks.marina.boundary.CacheEntry;
+import java.util.function.Function;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -17,8 +18,12 @@ import javax.ws.rs.PathParam;
 public class ConfigurationResource {
 
     @Inject
-    @Configurable("msg")
+    @CacheEntry(host = "headlands", port = 8080, cache = "configuration", key = "msg")
     Instance<String> message;
+
+    @Inject
+    @CacheEntry(host = "headlands", port = 8080, cache = "configuration")
+    Function<String, String> configurationCache;
 
     @GET
     public String all() {
@@ -28,7 +33,7 @@ public class ConfigurationResource {
     @GET
     @Path("{id}")
     public String getConfiguration(@PathParam("id") String id) {
-        return System.getenv(id);
+        return configurationCache.apply(id);
     }
 
 }
