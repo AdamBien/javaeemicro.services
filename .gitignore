@@ -1,10 +1,9 @@
 /basics/nbproject/
-/basics/target/
 /jaxrs/nbproject/
-/jaxrs/target/
 /supplier/nbproject/
-/supplier/target/
 /jaxrs-client/nbproject/
-/jaxrs-client/target/
 /processor/target/
 /processor/nb-configuration.xml
+target
+nbproject
+nb-configuration.xml
